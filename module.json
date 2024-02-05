@@ -1,0 +1,30 @@
+{
+    "id": "combat-notes",
+    "title": "Combat Notes",
+    "description": "Combat Notes is a FoundryVTT module that provides a convenient way to add notes and set up buff effects for characters during combat encounters.",
+    "url": "https://github.com/ODck/Combat-Notes",
+    "manifest": "https://github.com/ODck/Combat-Notes/releases/latest/download/module.json",
+    "download": "https://github.com/ODck/Combat-Notes/releases/latest/download/module.zip",
+    "version": "1.0.0",
+    "authors": [
+      {
+        "name": "ODck"
+      }
+    ],
+    "languages": [
+        {
+          "lang": "en",
+          "name": "English",
+          "path": "languages/en.json"
+        }
+      ],
+      "scripts": [
+        "scripts/config.js",
+        "scripts/combatNotes.js",
+        "scripts/main.js"
+      ],
+    "compatibility": {
+        "minimum": "10",
+        "verified": "11"
+      }
+  }
