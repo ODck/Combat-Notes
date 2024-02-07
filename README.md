@@ -14,7 +14,7 @@ The **Combat Notes** module for FoundryVTT provides a convenient way to keep tra
 
 - **Token Button:** Adds a button to the token interface for quick access to the reminder panel.
 - **Notes Panel:** Opens a panel where you can add and manage notes for your character.
-- **Buff Effects:** Set up buff effects to remind you of specific actions or conditions during combat.
+- **Buff Effects (Only Pathfinder 2e):** Set up buff effects to remind you of specific actions or conditions during combat.
 
 ## Installation
 
@@ -29,7 +29,7 @@ The **Combat Notes** module for FoundryVTT provides a convenient way to keep tra
 1. Once the module is installed and enabled, you will see a new button added to the token interface.
 2. Click on the button to open the notes panel.
 3. Add, edit, or delete notes as needed to keep track of important information for your character.
-4. You can also set up buff effects by checking the toggle when you add a new note.
+4. In Pathfinder 2e, you can also set up buff effects by checking the toggle when you add a new note.
 
 <a href="https://github.com/ODck/Combat-Notes">
     <p align="center">

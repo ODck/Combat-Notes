@@ -57,26 +57,37 @@ class CombatNotes {
 
         this.setReminderDialog = new Dialog({
             title: game.i18n.localize('REMEMBER-NEW-ACTION.dialog-title'),
-            content: `
-              <div>
-                <label for="input-field">${game.i18n.localize('REMEMBER-NEW-ACTION.dialog-header')}</label>
-                <input type="text" id="cr-input-field" name="input-field" style="margin-top: 5px; margin-bottom: 5px">
-                <div style="clear:both;"></div>
-                <div style="text-align: right;">
-                    <label for="effect-checkbox">${game.i18n.localize('REMEMBER-NEW-ACTION.action-effect')}</label>
-                    <input type="checkbox" id="effect-checkbox" name="effect-checkbox" style="float: right;">
-                </div>
-              </div>
-            `,
+            content: game.system.id === 'pf2e' ?
+                `        
+                <div>
+                    <label for="input-field">${game.i18n.localize('REMEMBER-NEW-ACTION.dialog-header')}</label>
+                    <input type="text" id="cr-input-field" name="input-field" style="margin-top: 5px; margin-bottom: 5px">
+                    <div style="clear:both;"></div>
+                    <div style="text-align: right;">
+                        <label for="effect-checkbox">${game.i18n.localize('REMEMBER-NEW-ACTION.action-effect')}</label>
+                        <input type="checkbox" id="effect-checkbox" name="effect-checkbox" style="float: right;">
+                    </div>
+                </div>`
+                : `
+                <div>
+                        <label for="input-field">${game.i18n.localize('REMEMBER-NEW-ACTION.dialog-header')}</label>
+                        <input type="text" id="cr-input-field" name="input-field" style="margin-top: 5px; margin-bottom: 5px">
+                    </div>
+                `,
             buttons: {
                 submit: {
                     label: game.i18n.localize('REMEMBER-NEW-ACTION.submit-button'),
                     callback: (html) => {
                         const inputValue = html.find('#cr-input-field')[0].value;
-                        const effectValue = html.find('#effect-checkbox')[0].checked;
-                        if (effectValue === false) { storeReminderInToken(token, inputValue); }
+                        if (game.system.id === 'pf2e') {
+                            const effectValue = html.find('#effect-checkbox')[0].checked;
+                            if (effectValue === false) { storeReminderInToken(token, inputValue); }
+                            else {
+                                createEffectInToken(token, inputValue)
+                            }
+                        }
                         else {
-                            createEffectInToken(token, inputValue)
+                            storeReminderInToken(token, inputValue)
                         }
                     }
                 },
@@ -94,15 +105,9 @@ class CombatNotes {
             ui.notifications.warn(game.i18n.localize('UI-NOTIFICATION.remove-action-error-owner'));
             return;
         }
-        token.unsetFlag(COMBATNOTES_ID, flagName);
-        // Refresh the dialog to update the list
-        if (this.activeDialog != null) {
-            this.activeDialog.close()
-        }
-        this.activeDialog = null
-        setTimeout(() => {
-            this.showCombatReminderDialog(token);
-        }, 50);
+        token.unsetFlag(COMBATNOTES_ID, flagName).then(()=>{
+            combatNotes.triggerCombatReminder(token);
+        });
     }
 }
 
@@ -122,21 +127,18 @@ function setReminderForToken(tokenID) {
 function storeReminderInToken(token, reminder) {
     let flagKey = COMBATNOTES_ID in token.flags ? Object.keys(token.flags[COMBATNOTES_ID]).length : 0;
     const flagData = {
-        name: "CombatReminders",
-        type: "string",
+        name: "CombatNotes",
+        type: "string", 
         value: reminder
     };
 
-    token.setFlag(COMBATNOTES_ID, flagKey, flagData);
-    ui.notifications.info(game.i18n.localize('UI-NOTIFICATION.new-action-ok'));
-    setTimeout(() => {
+    token.setFlag(COMBATNOTES_ID, flagKey, flagData).then(()=>{
         combatNotes.triggerCombatReminder(token);
-    }, 50);
+    });
+    ui.notifications.info(game.i18n.localize('UI-NOTIFICATION.new-action-ok'));
 }
 
 async function createEffectInToken(token, inputValue) {
-    console.log(token.actor)
-    const data = {...DUMMY_EFFECT, ...{name: inputValue}}
-    console.log(data)
-    const customEffect = await Item.create(data, {"parent" : token.actor})
+    const data = { ...DUMMY_EFFECT, ...{ name: inputValue } }
+    const customEffect = await Item.create(data, { "parent": token.actor })
 }
